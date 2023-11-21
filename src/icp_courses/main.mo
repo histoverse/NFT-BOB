@@ -10,7 +10,6 @@ import Bool "mo:base/Bool";
 import Blob "mo:base/Blob";
 import Principal "mo:base/Principal";
 import Time "mo:base/Time";
-import Debug "mo:base/Debug";
 import Error "mo:base/Error";
 import Types "./types";
 import Account "./account";
@@ -231,7 +230,7 @@ shared actor class NFT(icp_token_canister: Text, custodian: Principal, init : Ty
       return #Err(#Unauthorized);
     };
     let tokenAdapter : Types.ExtTokenActor = actor(icp_token_canister);
-    let accArg : Types.Account = {owner = Principal.fromActor(Self); subaccount = null;};
+    let accArg : Types.Account = {owner = Principal.fromActor(Self); subaccount = ?Blob.toArray(Account.defaultSubaccount());};
     let accountArg : Types.BinaryAccountBalanceArgs = {
       account = await tokenAdapter.account_identifier(accArg);//Blob.toArray(Principal.toBlob(Principal.fromActor(Self)));
     };
@@ -246,7 +245,7 @@ shared actor class NFT(icp_token_canister: Text, custodian: Principal, init : Ty
       let timeArg : Types.TimeStamp = {
         timestamp_nanos = Nat64.fromIntWrap(Time.now());
       };
-      let accArg : Types.Account = {owner = caller; subaccount = null;};
+      let accArg : Types.Account = {owner = caller; subaccount = ?Blob.toArray(Account.defaultSubaccount());};
       let args : Types.TransferArgs = {
         to = await tokenAdapter.account_identifier(accArg);//Blob.toArray(Principal.toBlob(caller));
         fee = feeArg;
@@ -269,7 +268,7 @@ shared actor class NFT(icp_token_canister: Text, custodian: Principal, init : Ty
     };
   };
 
-  public shared({caller}) func buy(to: Principal, token_id: Types.TokenId, transfer_id: Nat64) : async Types.TxReceipt {
+  public shared({caller}) func buy(token_id: Types.TokenId, transfer_id: Nat64) : async Types.TxReceipt {
     let item = List.find(nfts, func(token: Types.Nft) : Bool { token.id == token_id });
     switch (item) {
       case null {
@@ -304,7 +303,7 @@ shared actor class NFT(icp_token_canister: Text, custodian: Principal, init : Ty
                         nfts := List.map(nfts, func (item : Types.Nft) : Types.Nft {
                           if (item.id == token.id) {
                             let update : Types.Nft = {
-                              holders = List.push(to, item.holders);
+                              holders = List.push(caller, item.holders);
                               id = item.id;
                               metadata = token.metadata;
                             };
