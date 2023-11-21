@@ -4,18 +4,15 @@
       "main": "src/icp_courses/main.mo",
       "type": "motoko"
     },
-    "icp_courses_assets": {
-      "dependencies": [
-        "icp_courses"
-      ],
-      "frontend": {
-        "entrypoint": "src/icp_courses_assets/src/index.html"
-      },
-      "source": [
-        "src/icp_courses_assets/assets",
-        "dist/icp_courses_assets/"
-      ],
-      "type": "assets"
+    "icp_ledger_canister": {
+      "type": "custom",
+      "candid": "icp_ledger_candid.did",
+      "wasm": "ledger-canister.wasm",
+      "remote": {
+        "id": {
+          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai"
+        }
+      }
     }
   },
   "defaults": {
@@ -24,7 +21,7 @@
       "packtool": ""
     }
   },
-  "dfx": "0.9.3",
+  "dfx": "0.15.1",
   "networks": {
     "local": {
       "bind": "127.0.0.1:8000",
