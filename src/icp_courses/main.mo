@@ -11,6 +11,7 @@ import Blob "mo:base/Blob";
 import Principal "mo:base/Principal";
 import Time "mo:base/Time";
 import Error "mo:base/Error";
+import Text "mo:base/Text";
 import Types "./types";
 import Account "./account";
 
